@@ -12,6 +12,9 @@
       color: #fff;
     }
 
+    /* Shared */
+    .hidden { display: none; }
+
     /* Top bar */
     .navbar {
       display: flex;
@@ -22,13 +25,14 @@
       font-size: 17px;
       font-weight: 600;
     }
-    .navbar .left {
+    .navbar .left, .navbar .right {
       position: absolute;
-      left: 12px;
       color: #0a84ff;
       font-weight: 400;
       cursor: pointer;
     }
+    .navbar .left { left: 12px; }
+    .navbar .right { right: 12px; }
 
     /* Search bar */
     .search-bar {
@@ -123,72 +127,206 @@
       font-size: 15px;
       cursor: pointer;
     }
+
+    /* Profile screen */
+    .profile {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #6366f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 auto 16px;
+    }
+    .name {
+      font-size: 17px;
+      font-weight: 500;
+    }
+    .phone {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+    #phone {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: transparent;
+      text-shadow: 0 0 0 #aaa;
+      font-size: 14px;
+      text-align: center;
+    }
+    #phone::placeholder { color: #aaa; }
+
+    .amount {
+      font-size: 36px;
+      font-weight: 500;
+      margin: 30px 0 20px;
+      color: #666;
+    }
+    .amount.active { color: #fff; }
+    .amount input {
+      background: transparent;
+      border: none;
+      text-align: right;
+      font-size: 36px;
+      font-weight: 500;
+      width: 120px;
+      outline: none;
+      color: inherit;
+    }
+
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 16px;
+      gap: 10px;
+    }
+    .bottom input {
+      flex: 1;
+      background-color: #2c2c2e;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 14px;
+      font-size: 15px;
+      color: #fff;
+      outline: none;
+    }
+    .bottom input::placeholder { color: #aaa; }
+    .bottom button {
+      background-color: #3a3a3c;
+      color: #aaa;
+      border: none;
+      border-radius: 20px;
+      padding: 10px 20px;
+      font-size: 15px;
+      cursor: not-allowed;
+    }
+    .bottom button.active {
+      background-color: #0a84ff;
+      color: #fff;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Top bar -->
-  <div class="navbar">
-    <div class="left">Luk</div>
-    Send til
+  <!-- Screen 1: Contact list -->
+  <div id="screen1">
+    <div class="navbar">Send til</div>
+
+    <div class="search-bar">
+      <input id="nameInput" type="text" placeholder="Søg på navn eller nummer">
+      <button onclick="addContact()">Tilføj</button>
+    </div>
+
+    <div class="section">Forslag</div>
+    <div class="suggestions" id="suggestions"></div>
+
+    <div class="section">I nærheden</div>
+    <div class="nearby-card">
+      <h3>Udforsk steder<br>i nærheden</h3>
+      <p>Hvis du vil se steder i nærheden, skal vi have adgang til din placering.</p>
+      <button>Giv adgang</button>
+    </div>
   </div>
 
-  <!-- Search -->
-  <div class="search-bar">
-    <input id="nameInput" type="text" placeholder="Søg på navn eller nummer">
-    <button onclick="addContact()">Tilføj</button>
-  </div>
+  <!-- Screen 2: Profile -->
+  <div id="screen2" class="hidden">
+    <div class="navbar">
+      <div class="left" onclick="backToContacts()">←</div>
+      <div>Send til</div>
+      <div class="right">Annuller</div>
+    </div>
 
-  <!-- Forslag -->
-  <div class="section">Forslag</div>
-  <div class="suggestions" id="suggestions">
-    <!-- User contacts will appear here -->
-  </div>
+    <div class="profile">
+      <div class="circle" id="profileCircle">??</div>
+      <div class="name" id="profileName">Ukendt</div>
+      <div class="phone">
+        <input id="phone" type="tel" inputmode="numeric" placeholder="type random phone number here">
+      </div>
+    </div>
 
-  <!-- Nearby -->
-  <div class="section">I nærheden</div>
-  <div class="nearby-card">
-    <h3>Udforsk steder<br>i nærheden</h3>
-    <p>Hvis du vil se steder i nærheden, skal vi have adgang til din placering.</p>
-    <button>Giv adgang</button>
+    <div class="amount" id="amountDisplay">
+      <input id="amountInput" type="number" placeholder="0"> kr.
+    </div>
+
+    <div class="bottom">
+      <input id="messageInput" type="text" placeholder="Skriv en besked...">
+      <button id="nextBtn">Næste</button>
+    </div>
   </div>
 
   <script>
+    const screen1 = document.getElementById("screen1");
+    const screen2 = document.getElementById("screen2");
+
     function addContact() {
       const input = document.getElementById("nameInput");
       const suggestions = document.getElementById("suggestions");
       let fullName = input.value.trim();
-
       if (!fullName) return;
 
       let parts = fullName.split(" ");
       let firstName = parts[0];
       let lastNames = parts.slice(1).join(" ");
-
-      // shorten last names if longer than 8 chars
       if (lastNames.length > 8) {
         lastNames = lastNames.substring(0, 8) + "...";
       }
 
-      // initials: first letter of first + first of last
       let initials = firstName[0].toUpperCase();
       if (parts.length > 1) {
         initials += parts[1][0].toUpperCase();
       }
 
-      // create contact
       const contact = document.createElement("div");
       contact.className = "contact";
-      contact.onclick = () => location.href = "next.html";
       contact.innerHTML = `
         <div class="contact-circle">${initials}</div>
         <div class="contact-name">${firstName}<br>${lastNames}</div>
       `;
+      contact.onclick = () => openProfile(fullName, initials);
 
       suggestions.appendChild(contact);
       input.value = "";
     }
-  </script>
 
+    function openProfile(name, initials) {
+      document.getElementById("profileCircle").textContent = initials;
+      document.getElementById("profileName").textContent = name;
+      screen1.classList.add("hidden");
+      screen2.classList.remove("hidden");
+    }
+
+    function backToContacts() {
+      screen2.classList.add("hidden");
+      screen1.classList.remove("hidden");
+    }
+
+    // Handle amount + next button
+    const amountInput = document.getElementById("amountInput");
+    const amountDisplay = document.getElementById("amountDisplay");
+    const nextBtn = document.getElementById("nextBtn");
+
+    amountInput.addEventListener("input", () => {
+      if (amountInput.value && parseInt(amountInput.value) > 0) {
+        amountDisplay.classList.add("active");
+        nextBtn.classList.add("active");
+        nextBtn.disabled = false;
+      } else {
+        amountDisplay.classList.remove("active");
+        nextBtn.classList.remove("active");
+        nextBtn.disabled = true;
+      }
+    });
+  </script>
 </body>
 </html>
