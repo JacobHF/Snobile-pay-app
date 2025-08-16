@@ -94,9 +94,6 @@
     .contact-name {
       margin-top: 6px;
       font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     /* Nearby section */
@@ -138,25 +135,14 @@
 
   <!-- Search -->
   <div class="search-bar">
-    <input type="text" placeholder="Søg på navn eller nummer">
-    <button>Tilføj</button>
+    <input id="nameInput" type="text" placeholder="Søg på navn eller nummer">
+    <button onclick="addContact()">Tilføj</button>
   </div>
 
   <!-- Forslag -->
   <div class="section">Forslag</div>
-  <div class="suggestions">
-    <div class="contact" onclick="location.href='next.html'">
-      <div class="contact-circle">HF</div>
-      <div class="contact-name">Herman<br>Flaw Jens…</div>
-    </div>
-    <div class="contact" onclick="location.href='next.html'">
-      <div class="contact-circle">AB</div>
-      <div class="contact-name">Anna<br>Berg…</div>
-    </div>
-    <div class="contact" onclick="location.href='next.html'">
-      <div class="contact-circle">JS</div>
-      <div class="contact-name">Jonas<br>Sørens…</div>
-    </div>
+  <div class="suggestions" id="suggestions">
+    <!-- User contacts will appear here -->
   </div>
 
   <!-- Nearby -->
@@ -166,6 +152,42 @@
     <p>Hvis du vil se steder i nærheden, skal vi have adgang til din placering.</p>
     <button>Giv adgang</button>
   </div>
+
+  <script>
+    function addContact() {
+      const input = document.getElementById("nameInput");
+      const suggestions = document.getElementById("suggestions");
+      let fullName = input.value.trim();
+
+      if (!fullName) return;
+
+      let parts = fullName.split(" ");
+      let firstName = parts[0];
+      let lastNames = parts.slice(1).join(" ");
+
+      // shorten last names if longer than 8 chars
+      if (lastNames.length > 8) {
+        lastNames = lastNames.substring(0, 8) + "...";
+      }
+
+      // initials: first letter of first + first of last
+      let initials = firstName[0].toUpperCase();
+      if (parts.length > 1) {
+        initials += parts[1][0].toUpperCase();
+      }
+
+      // create contact
+      const contact = document.createElement("div");
+      contact.className = "contact";
+      contact.innerHTML = `
+        <div class="contact-circle">${initials}</div>
+        <div class="contact-name">${firstName}<br>${lastNames}</div>
+      `;
+
+      suggestions.appendChild(contact);
+      input.value = "";
+    }
+  </script>
 
 </body>
 </html>
