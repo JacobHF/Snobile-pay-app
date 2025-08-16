@@ -179,6 +179,7 @@
       // create contact
       const contact = document.createElement("div");
       contact.className = "contact";
+      contact.onclick = () => location.href = "next.html";
       contact.innerHTML = `
         <div class="contact-circle">${initials}</div>
         <div class="contact-name">${firstName}<br>${lastNames}</div>
