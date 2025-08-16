@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bekræft</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #1c1c1e;
+      color: #fff;
+      text-align: center;
+    }
+
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    .navbar .left, .navbar .right {
+      color: #0a84ff;
+      font-weight: 400;
+      cursor: pointer;
+    }
+
+    /* Profile */
+    .profile {
+      margin-top: 30px;
+    }
+    .circle {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background-color: #6366f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 auto 16px;
+    }
+    .name {
+      font-size: 17px;
+      font-weight: 500;
+    }
+    .phone {
+      font-size: 14px;
+      color: #aaa;
+      margin-top: 4px;
+    }
+
+    /* Amount */
+    .amount {
+      font-size: 36px;
+      font-weight: 700;
+      margin: 30px 0 20px;
+    }
+
+    /* Options Box */
+    .options {
+      margin: 20px auto;
+      background-color: #2c2c2e;
+      border-radius: 14px;
+      width: 90%;
+      max-width: 400px;
+      padding: 14px;
+      text-align: left;
+    }
+    .option {
+      padding: 12px 0;
+      border-bottom: 1px solid #3a3a3c;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .option:last-child {
+      border-bottom: none;
+    }
+    .option .label {
+      font-size: 15px;
+    }
+    .option small {
+      color: #aaa;
+      display: block;
+      font-size: 12px;
+    }
+    .option .action {
+      color: #0a84ff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Confirm Slider */
+    .confirm-container {
+      margin: 40px auto;
+      width: 90%;
+      max-width: 400px;
+      background-color: #0a84ff;
+      border-radius: 40px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .confirm-text {
+      flex: 1;
+      text-align: center;
+      font-weight: 600;
+    }
+    .slider {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 50px;
+      background-color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      transition: left 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <div class="left" onclick="location.href='index.html'">←</div>
+    <div>Send til</div>
+    <div class="right">Annuller</div>
+  </div>
+
+  <!-- Profile -->
+  <div class="profile">
+    <div class="circle">HF</div>
+    <div class="name">Herman Flaw Jensen</div>
+    <div class="phone" id="phoneDisplay"></div>
+  </div>
+
+  <!-- Amount -->
+  <div class="amount" id="amountDisplay"></div>
+
+  <!-- Options -->
+  <div class="options">
+    <div class="option">
+      <div class="label">🏦 Any random genereted 14 number</div>
+      <div class="action">Skift</div>
+    </div>
+    <div class="option">
+      <div>
+        <div class="label">🎁 Send med gavepapir</div>
+        <small>Pris: 7 kr. (inkl. moms)</small>
+      </div>
+      <div class="action">›</div>
+    </div>
+  </div>
+
+  <!-- Confirm Slider -->
+  <div class="confirm-container">
+    <div class="confirm-text">Send</div>
+    <div class="slider">›</div>
+  </div>
+
+  <script>
+    // Get data from previous screen
+    const phone = localStorage.getItem("phone") || "Intet nummer";
+    const amount = localStorage.getItem("amount") || "0";
+
+    document.getElementById("phoneDisplay").textContent = phone;
+    document.getElementById("amountDisplay").textContent = amount + " kr.";
+
+    // Fake slider interaction
+    const slider = document.querySelector(".slider");
+    const container = document.querySelector(".confirm-container");
+
+    let isDragging = false;
+
+    slider.addEventListener("mousedown", () => { isDragging = true; });
+    slider.addEventListener("mouseup", () => { isDragging = false; slider.style.left = "0"; });
+    slider.addEventListener("mousemove", (e) => {
+      if (!isDragging) return;
+      const rect = container.getBoundingClientRect();
+      let x = e.clientX - rect.left - 25;
+      if (x < 0) x = 0;
+      if (x > rect.width - 50) {
+        x = rect.width - 50;
+        alert("✅ Pengene er sendt!");
+      }
+      slider.style.left = x + "px";
+    });
+  </script>
+
+</body>
+</html>
