@@ -264,25 +264,7 @@
       let isDragging = false;
 
       function finishSend() {
-        isDragging = false; // stop dragging
-        // loading in button
-        container.innerHTML = '<div class="confirm-text"><div class="spinner"></div></div>';
-        // after short delay: show green chip above with blue check + keep amount, and lock the button with a check
-        setTimeout(() => {
-          const statusRow = document.getElementById('statusRow');
-          if (statusRow) {
-            statusRow.innerHTML = `
-              <div class="status-chip">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                  <path d="M20 6L9 17l-5-5" stroke="#0a84ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
-                </svg>
-                Du sendte
-              </div>`;
-          }
-          container.innerHTML = '<div class="confirm-text">✔</div>';
-            // Save to localStorage
-function finishSend() {
-  isDragging = false; // stop dragging
+  isDragging = false;
   container.innerHTML = '<div class="confirm-text"><div class="spinner"></div></div>';
 
   setTimeout(() => {
@@ -299,22 +281,28 @@ function finishSend() {
 
     container.innerHTML = '<div class="confirm-text">✔</div>';
 
-    // --- Save the sent profile ---
+    // --- Save to localStorage ---
     let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
 
-    // Read the name & initials from the DOM elements directly
     const name = document.getElementById('profileName').textContent || "Ukendt";
     const initials = document.getElementById('profileCircle').textContent || "--";
+    const amount = localStorage.getItem('amount') || "0";
+    const message = document.getElementById('messageInput').value || "";
 
-    sentProfiles.unshift({ name, initials, time: Date.now() });
+    // If this person already exists, remove old entry
+    sentProfiles = sentProfiles.filter(p => p.name !== name);
+
+    // Add newest on top
+    sentProfiles.unshift({ name, initials, amount, message, time: Date.now() });
+
     localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
 
-    // --- Redirect back after 1.5 seconds ---
     setTimeout(() => {
       window.location.href = "index.html";
     }, 1500);
   }, 1000);
 }
+
 
 
 
@@ -353,6 +341,7 @@ window.location.href = "index.html";
   </script>
 </body>
 </html>
+
 
 
 
