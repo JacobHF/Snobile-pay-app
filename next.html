@@ -1,182 +1,317 @@
 <!DOCTYPE html>
 <html lang="da">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Send til">
+
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" sizes="192x192" href="icon.png">
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Send til</title>
   <style>
-    body {
-      margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #1c1c1e;
-      color: #fff;
-      text-align: center;
-    }
+    body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background:#1c1c1e; color:#fff; }
+    .hidden{display:none}
 
     /* Navbar */
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 16px;
-      font-size: 17px;
-      font-weight: 600;
-    }
-    .navbar .left, .navbar .right {
-      color: #0a84ff;
-      font-weight: 400;
-      cursor: pointer;
-    }
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;font-size:17px;font-weight:600}
+    .navbar .left,.navbar .right{color:#0a84ff;font-weight:400;cursor:pointer}
 
-    /* Profile */
-    .profile {
-      margin-top: 30px;
-    }
-    .circle {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      background-color: #6366f1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      font-weight: 600;
-      margin: 0 auto 16px;
-    }
-    .name {
-      font-size: 17px;
-      font-weight: 500;
-    }
-    .phone {
-      font-size: 14px;
-      color: #aaa;
-      margin-top: 4px;
-    }
+    /* Search (screen1) */
+    .search-bar{display:flex;align-items:center;justify-content:space-between;background:#2c2c2e;border-radius:12px;padding:10px 12px;margin:0 16px;color:#aaa;font-size:15px}
+    .search-bar input{flex:1;border:none;background:transparent;color:#fff;font-size:15px;outline:none}
+    .search-bar button{margin-left:10px;background:none;border:none;color:#0a84ff;font-size:15px;cursor:pointer}
+    .section{margin:20px 16px 10px;font-size:15px;font-weight:500;color:#aaa}
+    .suggestions{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 16px}
+    .contact{text-align:center;cursor:pointer}
+    .contact-circle{width:60px;height:60px;margin:0 auto;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:18px;color:#fff}
+    .contact-name{margin-top:6px;font-size:13px}
+    .nearby-card{background:#2c2c2e;margin:10px 16px 40px;border-radius:12px;padding:20px;text-align:center}
+    .nearby-card h3{font-size:17px;font-weight:600;margin-bottom:6px}
+    .nearby-card p{font-size:14px;color:#aaa;margin-bottom:16px}
+    .nearby-card button{background:#3b82f6;color:#fff;border:none;border-radius:20px;padding:10px 24px;font-size:15px;cursor:pointer}
 
-    /* Hide phone input text but keep it usable */
-    #phone {
-      background: transparent;
-      border: none;
-      outline: none;
-      color: transparent;       /* makes typed numbers invisible */
-      text-shadow: 0 0 0 #aaa;  /* makes placeholder visible but hides input */
-      font-size: 14px;
-      text-align: center;
-    }
-    #phone::placeholder {
-      color: #aaa;
-    }
+    /* Profile (screen2) */
+    .profile{text-align:center;margin-top:30px}
+    .circle{width:70px;height:70px;border-radius:50%;background:#6366f1;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;margin:0 auto 16px}
+    .name{font-size:17px;font-weight:500}
+    .phone{font-size:14px;color:#aaa;margin-top:4px}
+    #phone{background:transparent;border:none;outline:none;color:transparent;text-shadow:0 0 0 #aaa;font-size:14px;text-align:center}
+    #phone::placeholder{color:#aaa}
 
-    /* Amount */
-    .amount {
-      font-size: 36px;
-      font-weight: 500;
-      margin: 30px 0 20px;
-      color: #666;
-      display: flex;
-      justify-content: center;
-      align-items: baseline;
-      gap: 6px;
-    }
-    .amount.active {
-      color: #fff;
-    }
-    .amount input {
-      background: transparent;
-      border: none;
-      font-size: 36px;
-      font-weight: 500;
-      outline: none;
-      color: inherit;
-      text-align: center;
-      width: 100px;
-    }
+    .amount{font-size:36px;font-weight:500;margin:30px 0 20px;color:#fff;display:flex;justify-content:center;align-items:baseline;gap:6px}
+    .amount input{background:transparent;border:none;font-size:36px;font-weight:500;outline:none;color:inherit;text-align:center;width:110px}
 
-    /* Message + button */
-    .bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px 16px;
-      gap: 10px;
-    }
-    .bottom input {
-      flex: 1;
-      background-color: #2c2c2e;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 14px;
-      font-size: 15px;
-      color: #fff;
-      outline: none;
-    }
-    .bottom input::placeholder {
-      color: #aaa;
-    }
-    .bottom button {
-      background-color: #3a3a3c;
-      color: #aaa;
-      border: none;
-      border-radius: 20px;
-      padding: 10px 20px;
-      font-size: 15px;
-      cursor: not-allowed;
-    }
-    .bottom button.active {
-      background-color: #0a84ff;
-      color: #fff;
-      cursor: pointer;
-    }
+    .bottom{display:flex;justify-content:space-between;align-items:center;margin:20px 16px;gap:10px}
+    .bottom input{flex:1;background:#2c2c2e;border:none;border-radius:20px;padding:10px 14px;font-size:15px;color:#fff;outline:none}
+    .bottom input::placeholder{color:#aaa}
+    .bottom button{background:#3a3a3c;color:#aaa;border:none;border-radius:20px;padding:10px 20px;font-size:15px;cursor:not-allowed}
+    .bottom button.active{background:#0a84ff;color:#fff;cursor:pointer}
+
+    /* Confirm (screen3) */
+    .options{margin:20px auto;background:#2c2c2e;border-radius:14px;width:90%;max-width:400px;padding:14px;text-align:left}
+    .option{padding:12px 0;border-bottom:1px solid #3a3a3c;display:flex;justify-content:space-between;align-items:center}
+    .option:last-child{border-bottom:none}
+    .option .label{font-size:15px}
+    .option small{color:#aaa;display:block;font-size:12px}
+    .option .action{color:#0a84ff;cursor:pointer;font-size:14px}
+
+    .confirm-container{margin:40px auto;width:90%;max-width:400px;background:#0a84ff;border-radius:40px;height:50px;display:flex;align-items:center;position:relative;overflow:hidden}
+    .confirm-text{flex:1;text-align:center;font-weight:600}
+    .slider{position:absolute;left:0;top:0;bottom:0;width:50px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:grab;transition:left .2s}
+
+    /* Status chip + spinner */
+    .status-row{display:flex;justify-content:center;margin-top:12px}
+    .status-chip{display:inline-flex;align-items:center;gap:8px;padding:4px 10px;border-radius:10px;background:#32D74B;color:#000;font-size:13px;font-weight:600}
+    .status-chip svg{display:block}
+    .spinner{width:18px;height:18px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <div class="navbar">
-    <div class="left" onclick="location.href='index.html'">←</div>
-    <div>Send til</div>
-    <div class="right">Annuller</div>
-  </div>
+  <!-- Screen 1: Contact list -->
+  <div id="screen1">
+    <div class="navbar"><div>Send til</div></div>
 
-  <!-- Profile -->
-  <div class="profile">
-    <div class="circle">HF</div>
-    <div class="name">Herman Flaw Jensen</div>
-    <div class="phone">
-      <input id="phone" type="tel" inputmode="numeric" placeholder="type random phone number here">
+    <div class="search-bar">
+      <input id="nameInput" type="text" placeholder="Søg på navn eller nummer" />
+      <button id="addBtn">Tilføj</button>
+    </div>
+
+    <div class="section">Forslag</div>
+    <div class="suggestions" id="suggestions"></div>
+
+    <div class="section">I nærheden</div>
+    <div class="nearby-card">
+      <h3>Udforsk steder<br />i nærheden</h3>
+      <p>Hvis du vil se steder i nærheden, skal vi have adgang til din placering.</p>
+      <button>Giv adgang</button>
     </div>
   </div>
 
-  <!-- Amount -->
-  <div class="amount" id="amountDisplay">
-    <input id="amountInput" type="number" placeholder="0">
-    <span>kr.</span>
+  <!-- Screen 2: Profile -->
+  <div id="screen2" class="hidden">
+    <div class="navbar">
+      <div class="left" id="backTo1">←</div>
+      <div>Send til</div>
+      <div class="right" id="cancelTo1">Annuller</div>
+    </div>
+
+    <div class="profile">
+      <div class="circle" id="profileCircle">??</div>
+      <div class="name" id="profileName">Ukendt</div>
+      <div class="phone">
+        <input id="phone" type="tel" inputmode="numeric" placeholder="type random phone number here" />
+      </div>
+    </div>
+
+    <div class="amount" id="amountDisplay">
+      <input id="amountInput" type="number" placeholder="0" />
+      <span>kr.</span>
+    </div>
+
+    <div class="bottom">
+      <input id="messageInput" type="text" placeholder="Skriv en besked..." />
+      <button id="nextBtn">Næste</button>
+    </div>
   </div>
 
-  <!-- Message + button -->
-  <div class="bottom">
-    <input id="messageInput" type="text" placeholder="Skriv en besked...">
-    <button id="nextBtn">Næste</button>
+  <!-- Screen 3: Confirm -->
+  <div id="screen3" class="hidden">
+    <div class="navbar">
+      <div class="left" id="backTo2">←</div>
+      <div>Send til</div>
+      <div class="right" id="cancelTo1b">Annuller</div>
+    </div>
+
+    <div class="profile">
+      <div class="circle" id="confirmCircle">??</div>
+      <div class="name" id="confirmName">Ukendt</div>
+      <div class="phone" id="confirmPhone"></div>
+    </div>
+
+    <div id="statusRow" class="status-row"></div>
+
+    <div class="amount" id="confirmAmount"></div>
+
+    <div class="options">
+      <div class="option">
+        <div class="label">🏦 <span id="randomNumber"></span></div>
+        <div class="action">Skift</div>
+      </div>
+      <div class="option">
+        <div>
+          <div class="label">🎁 Send med gavepapir</div>
+          <small>Pris: 7 kr. (inkl. moms)</small>
+        </div>
+        <div class="action">›</div>
+      </div>
+    </div>
+
+    <div class="confirm-container" id="confirmContainer">
+      <div class="confirm-text">Send</div>
+      <div class="slider">›</div>
+    </div>
   </div>
 
   <script>
-    const amountInput = document.getElementById("amountInput");
-    const amountDisplay = document.getElementById("amountDisplay");
-    const nextBtn = document.getElementById("nextBtn");
+    // Run after DOM is ready to avoid any ReferenceError
+    window.addEventListener('DOMContentLoaded', () => {
+      const screen1 = document.getElementById('screen1');
+      const screen2 = document.getElementById('screen2');
+      const screen3 = document.getElementById('screen3');
 
-    amountInput.addEventListener("input", () => {
-      if (amountInput.value && parseInt(amountInput.value) > 0) {
-        amountDisplay.classList.add("active");
-        nextBtn.classList.add("active");
-        nextBtn.disabled = false;
-      } else {
-        amountDisplay.classList.remove("active");
-        nextBtn.classList.remove("active");
-        nextBtn.disabled = true;
+      const goToScreen = (n) => {
+        screen1.classList.add('hidden');
+        screen2.classList.add('hidden');
+        screen3.classList.add('hidden');
+        if (n === 1) screen1.classList.remove('hidden');
+        if (n === 2) screen2.classList.remove('hidden');
+        if (n === 3) screen3.classList.remove('hidden');
+      };
+
+      // --- Contacts ---
+      function addContact() {
+        const input = document.getElementById('nameInput');
+        const suggestions = document.getElementById('suggestions');
+        let fullName = (input.value || '').trim();
+        if (!fullName) return;
+
+        let parts = fullName.split(/\s+/);
+        let firstName = parts[0];
+        let lastNames = parts.slice(1).join(' ');
+        if (lastNames.length > 8) lastNames = lastNames.substring(0, 8) + '...';
+
+        let initials = firstName[0].toUpperCase();
+        if (parts.length > 1) initials += parts[1][0].toUpperCase();
+
+        const contact = document.createElement('div');
+        contact.className = 'contact';
+        contact.innerHTML = `
+          <div class="contact-circle">${initials}</div>
+          <div class="contact-name">${firstName}<br>${lastNames}</div>
+        `;
+        contact.addEventListener('click', () => openProfile(fullName, initials));
+
+        suggestions.appendChild(contact);
+        input.value = '';
       }
+      window.addContact = addContact; // exposed for tests
+
+      function openProfile(name, initials) {
+        document.getElementById('profileCircle').textContent = initials;
+        document.getElementById('profileName').textContent = name;
+        goToScreen(2);
+      }
+
+      // Bind add button without inline onclick
+      document.getElementById('addBtn').addEventListener('click', addContact);
+
+      // Back/cancel handlers
+      document.getElementById('backTo1').addEventListener('click', () => goToScreen(1));
+      document.getElementById('cancelTo1').addEventListener('click', () => goToScreen(1));
+      document.getElementById('backTo2').addEventListener('click', () => goToScreen(2));
+      document.getElementById('cancelTo1b').addEventListener('click', () => goToScreen(1));
+
+      // --- Amount flow ---
+      const amountInput = document.getElementById('amountInput');
+      const nextBtn = document.getElementById('nextBtn');
+      const phoneInput = document.getElementById('phone');
+
+      amountInput.addEventListener('input', () => {
+        if (amountInput.value && parseInt(amountInput.value, 10) > 0) {
+          nextBtn.classList.add('active');
+          nextBtn.disabled = false;
+        } else {
+          nextBtn.classList.remove('active');
+          nextBtn.disabled = true;
+        }
+      });
+
+      function generateRandom14Digit() {
+        let num = '';
+        for (let i = 0; i < 14; i++) num += Math.floor(Math.random() * 10);
+        return num;
+      }
+
+      function updateConfirmScreen() {
+        document.getElementById('randomNumber').textContent = generateRandom14Digit();
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (!nextBtn.classList.contains('active')) return;
+        localStorage.setItem('phone', phoneInput.value || 'Intet nummer');
+        localStorage.setItem('amount', amountInput.value || '0');
+        localStorage.setItem('name', document.getElementById('profileName').textContent);
+        localStorage.setItem('initials', document.getElementById('profileCircle').textContent);
+
+        document.getElementById('confirmPhone').textContent = localStorage.getItem('phone');
+        document.getElementById('confirmAmount').textContent = localStorage.getItem('amount') + ' kr.';
+        document.getElementById('confirmName').textContent = localStorage.getItem('name');
+        document.getElementById('confirmCircle').textContent = localStorage.getItem('initials');
+
+        updateConfirmScreen();
+        goToScreen(3);
+      });
+
+      // --- Slider send effect (mouse + touch) ---
+      const container = document.getElementById('confirmContainer');
+      const slider = container.querySelector('.slider');
+      let isDragging = false;
+
+      function finishSend() {
+        isDragging = false; // stop dragging
+        // loading in button
+        container.innerHTML = '<div class="confirm-text"><div class="spinner"></div></div>';
+        // after short delay: show green chip above with blue check + keep amount, and lock the button with a check
+        setTimeout(() => {
+          const statusRow = document.getElementById('statusRow');
+          if (statusRow) {
+            statusRow.innerHTML = `
+              <div class="status-chip">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M20 6L9 17l-5-5" stroke="#0a84ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                Du sendte
+              </div>`;
+          }
+          container.innerHTML = '<div class="confirm-text">✔</div>';
+        }, 900);
+      }
+
+      function onDrag(clientX) {
+        const rect = container.getBoundingClientRect();
+        let x = clientX - rect.left - 25;
+        if (x < 0) x = 0;
+        if (x > rect.width - 50) { x = rect.width - 50; finishSend(); }
+        if (slider && slider.parentElement) slider.style.left = x + 'px';
+      }
+
+      // Mouse
+      slider.addEventListener('mousedown', () => { isDragging = true; });
+      window.addEventListener('mouseup', () => { isDragging = false; if (slider && slider.parentElement) slider.style.left = '0'; });
+      window.addEventListener('mousemove', (e) => { if (isDragging) onDrag(e.clientX); });
+
+      // Touch (iOS)
+      slider.addEventListener('touchstart', () => { isDragging = true; }, { passive: true });
+      window.addEventListener('touchend', () => { isDragging = false; if (slider && slider.parentElement) slider.style.left = '0'; }, { passive: true });
+      window.addEventListener('touchmove', (e) => { if (isDragging) onDrag(e.touches[0].clientX); }, { passive: true });
+
+      // --- Simple tests (console) ---
+      (function runTests(){
+        console.assert(typeof window.addContact === 'function', 'addContact should be defined');
+        const r = generateRandom14Digit();
+        console.assert(/^\d{14}$/.test(r), 'random number should be 14 digits');
+        console.assert(document.getElementById('randomNumber'), 'randomNumber span exists');
+        console.log('[OK] Basic tests passed');
+      })();
     });
   </script>
-
 </body>
 </html>
+
+
