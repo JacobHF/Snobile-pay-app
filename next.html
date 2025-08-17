@@ -280,6 +280,14 @@
               </div>`;
           }
           container.innerHTML = '<div class="confirm-text">✔</div>';
+            // Save profile info for index.html
+let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
+sentProfiles.unshift({
+  name: localStorage.getItem("name"),
+  initials: localStorage.getItem("initials"),
+  time: Date.now()
+});
+localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
         }, 900);
       }
 
@@ -313,5 +321,6 @@
   </script>
 </body>
 </html>
+
 
 
