@@ -283,10 +283,8 @@
             // Save to localStorage
 function finishSend() {
   isDragging = false; // stop dragging
-  // loading in button
   container.innerHTML = '<div class="confirm-text"><div class="spinner"></div></div>';
 
-  // after short delay: show green chip above with blue check + keep amount, and lock the button with a check
   setTimeout(() => {
     const statusRow = document.getElementById('statusRow');
     if (statusRow) {
@@ -300,19 +298,20 @@ function finishSend() {
     }
     container.innerHTML = '<div class="confirm-text">✔</div>';
 
-    // ✅ Save to localStorage
+    // --- Save the sent profile ---
     let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
-    const name = localStorage.getItem("name");
-    const initials = localStorage.getItem("initials");
+    const name = localStorage.getItem("name") || "Ukendt";
+    const initials = localStorage.getItem("initials") || "--";
     sentProfiles.unshift({ name, initials, time: Date.now() });
     localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
 
-    // ✅ Go back after 1.5 sec
+    // --- Redirect back after 1.5 seconds ---
     setTimeout(() => {
       window.location.href = "index.html";
     }, 1500);
-  }, 1000); // this matches your spinner delay
+  }, 1000);
 }
+
 
 
 // Go back to index.html
@@ -350,6 +349,7 @@ window.location.href = "index.html";
   </script>
 </body>
 </html>
+
 
 
 
