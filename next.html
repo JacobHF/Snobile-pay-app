@@ -296,12 +296,16 @@ function finishSend() {
           Du sendte
         </div>`;
     }
+
     container.innerHTML = '<div class="confirm-text">✔</div>';
 
     // --- Save the sent profile ---
     let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
-    const name = localStorage.getItem("name") || "Ukendt";
-    const initials = localStorage.getItem("initials") || "--";
+
+    // Read the name & initials from the DOM elements directly
+    const name = document.getElementById('profileName').textContent || "Ukendt";
+    const initials = document.getElementById('profileCircle').textContent || "--";
+
     sentProfiles.unshift({ name, initials, time: Date.now() });
     localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
 
