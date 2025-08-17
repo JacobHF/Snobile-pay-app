@@ -280,14 +280,13 @@
               </div>`;
           }
           container.innerHTML = '<div class="confirm-text">✔</div>';
-            // Save profile info for index.html
+            // Save to localStorage
 let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
-sentProfiles.unshift({
-  name: localStorage.getItem("name"),
-  initials: localStorage.getItem("initials"),
-  time: Date.now()
-});
+sentProfiles.unshift({ name, initials, time: Date.now() });
 localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
+
+// Go back to index.html
+window.location.href = "index.html";
         }, 900);
       }
 
@@ -321,6 +320,7 @@ localStorage.setItem("sentProfiles", JSON.stringify(sentProfiles));
   </script>
 </body>
 </html>
+
 
 
 
