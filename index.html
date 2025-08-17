@@ -133,23 +133,7 @@
   </div>
 
   <div class="section-title">Seneste</div>
-  <div class="contact-list">
-    <div class="contact">
-      <div class="avatar">HØ</div>
-      <div class="contact-info">
-        <div class="contact-name">Herman Rosenørn Ø...</div>
-        <div class="contact-sub">Du sendte · i går</div>
-      </div>
-      <div class="contact-amount">0,01 kr.</div>
-    </div>
-    <div class="contact">
-      <div class="avatar">JH</div>
-      <div class="contact-info">
-        <div class="contact-name">Jesper Høgh Stengaard Hansen</div>
-        <div class="contact-sub">Tag får dæ† 🙏 · onsdag</div>
-      </div>
-    </div>
-  </div>
+  <div class="contact-list" id="recentList"></div>
 
   <div class="section-title">Forslag</div>
   <div class="contact-list">
@@ -210,6 +194,44 @@
     function goNext() {
       window.location.href = "next.html";
     }
+
+    // Load saved profiles when page opens
+    window.addEventListener("DOMContentLoaded", () => {
+      const list = document.getElementById("recentList");
+      let sentProfiles = JSON.parse(localStorage.getItem("sentProfiles") || "[]");
+
+      function timeAgo(ts) {
+        const diff = Math.floor((Date.now() - ts) / 1000);
+        if (diff < 60) return `Du sendte · ${diff} sekund${diff !== 1 ? 'er' : ''}`;
+        if (diff < 3600) return `Du sendte · ${Math.floor(diff/60)} minut${Math.floor(diff/60) !== 1 ? 'ter' : ''}`;
+        if (diff < 86400) return `Du sendte · ${Math.floor(diff/3600)} time${Math.floor(diff/3600) !== 1 ? 'r' : ''}`;
+        return "Du sendte · i går";
+      }
+
+      // Render all profiles
+      function renderProfiles() {
+        list.innerHTML = "";
+        sentProfiles.forEach(profile => {
+          const contact = document.createElement("div");
+          contact.className = "contact";
+          contact.innerHTML = `
+            <div class="avatar">${profile.initials}</div>
+            <div class="contact-info">
+              <div class="contact-name">${profile.name}</div>
+              <div class="contact-sub">${timeAgo(profile.time)}</div>
+            </div>
+            <div class="contact-amount">0,00 kr.</div>
+          `;
+          list.appendChild(contact);
+        });
+      }
+
+      // First render
+      renderProfiles();
+
+      // Update "Du sendte · X sekunder" every second
+      setInterval(renderProfiles, 1000);
+    });
   </script>
 
 </body>
